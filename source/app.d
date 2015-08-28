@@ -10,6 +10,7 @@ struct PhoneBookEntry
 	string nickName;
 	string homeNumber;
 	string cellNumber;
+	string workNumber;
 }
 
 void processPhoneBookEntries(string phoneBookName, string searchTerm, bool breakOnFound = false)
@@ -36,7 +37,8 @@ void processPhoneBookEntries(string phoneBookName, string searchTerm, bool break
 					writeln("     -==Entry==-");
 					writeln("NAME: ", record.name);
 					writeln("HOME: ", record.homeNumber);
-					writeln("CELLPHONE: : ", record.cellNumber);
+					writeln("CELLPHONE: ", record.cellNumber);
+					writeln("WORK: ", record.workNumber);
 					writeln();
 				}
 
@@ -72,7 +74,7 @@ string loadPhoneBook(immutable string phoneBookName)
 	{
 		auto f = File(phoneBookName, "w+"); // Create an empty phone book and insert dummy data.
 
-		text = "Uncle Tom;Tommy;123-4567;987-6543";
+		text = "Uncle Tom;Tommy;123-4567;987-6543;211-2345";
 		f.write(text);
 	}
 
