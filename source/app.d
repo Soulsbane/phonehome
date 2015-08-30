@@ -2,7 +2,7 @@ import std.stdio;
 import std.csv;
 import std.string : lineSplitter, strip, toLower, indexOf, CaseSensitive;
 import std.file : exists, readText;
-import std.array : empty;
+import std.array : empty, split;
 
 struct PhoneBookEntry
 {
@@ -13,10 +13,28 @@ struct PhoneBookEntry
 	string workNumber;
 }
 
-void processPhoneBookEntries(string phoneBookName, string searchTerm, bool allowMultipleEntries = false)
+string pluralizeEntryCount(immutable uint count) pure @safe
+{
+	string pluralizedNumber;
+
+	if(count == 1)
+	{
+		pluralizedNumber = "1 entry";
+	}
+	else
+	{
+		import std.conv : to;
+		pluralizedNumber = to!string(count) ~ " entries";
+	}
+
+	return pluralizedNumber;
+}
+
+void processPhoneBookEntries(string phoneBookName, string searchTerm, bool allowMultipleEntries = false) @safe
 {
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
 	uint entryCount = 0;
+	PhoneBookEntry[] entries;
 
 	foreach(line; lines)
 	{
@@ -30,21 +48,13 @@ void processPhoneBookEntries(string phoneBookName, string searchTerm, bool allow
 		{
 			if(line.indexOf(searchTerm, CaseSensitive.no) != -1)
 			{
-				auto records = csvReader!PhoneBookEntry(line,';');
+				immutable string[] values = line.split(";");
+				PhoneBookEntry entry = getPhoneBookEntry(values);
 
-				foreach(record; records)
-				{
-					writeln("     -==Entry==-");
-					writeln("NAME: ", record.name);
-					writeln("HOME: ", record.homeNumber);
-					writeln("CELLPHONE: ", record.cellNumber);
-					writeln("WORK: ", record.workNumber);
-					writeln();
-				}
-
+				entries ~= entry;
 				++entryCount;
 
-				if(allowMultipleEntries)
+				if(!allowMultipleEntries)
 				{
 					break;
 				}
@@ -60,9 +70,23 @@ void processPhoneBookEntries(string phoneBookName, string searchTerm, bool allow
 	{
 		writeln("Can't phone home! No entries found matching ", searchTerm, " in the phonebook.");
 	}
+	else
+	{
+		writeln("Found ", pluralizeEntryCount(entryCount), ":\n");
+
+		foreach(entry; entries)
+		{
+			writeln("     -==Entry==-");
+			writeln("NAME: ", entry.name);
+			writeln("HOME: ", entry.homeNumber);
+			writeln("CELLPHONE: ", entry.cellNumber);
+			writeln("WORK: ", entry.workNumber);
+			writeln();
+		}
+	}
 }
 
-string loadPhoneBook(immutable string phoneBookName)
+string loadPhoneBook(immutable string phoneBookName) @safe
 {
 	string text;
 
@@ -79,6 +103,36 @@ string loadPhoneBook(immutable string phoneBookName)
 	}
 
 	return text;
+}
+
+PhoneBookEntry getPhoneBookEntry(immutable string[] values) pure @safe
+{
+	PhoneBookEntry entry;
+	int i;
+
+	while(i < values.length)
+	{
+		final switch(i)
+		{
+			case 0:
+				entry.name = values[0];
+				break;
+			case 1:
+				entry.nickName = values[1];
+				break;
+			case 2:
+				entry.homeNumber = values[2];
+				break;
+			case 3:
+				entry.cellNumber = values[3];
+				break;
+			case 4:
+				entry.workNumber = values[4];
+				break;
+		}
+		++i;
+	}
+	return entry;
 }
 
 void main(string[] arguments)
