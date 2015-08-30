@@ -1,6 +1,6 @@
 import std.stdio;
 import std.csv;
-import std.string : lineSplitter, strip, toLower, indexOf, CaseSensitive;
+import std.string : lineSplitter, strip, toLower, indexOf, startsWith, CaseSensitive;
 import std.file : exists, readText;
 import std.array : empty, split;
 
@@ -40,7 +40,7 @@ void processPhoneBookEntries(string phoneBookName, string searchTerm, bool allow
 	{
 		line = strip(line);
 
-		if(line.empty)
+		if(line.empty || line.startsWith("#"))
 		{
 			continue;
 		}
