@@ -13,7 +13,7 @@ struct PhoneBookEntry
 	string workNumber;
 }
 
-void processPhoneBookEntries(string phoneBookName, string searchTerm, bool breakOnFound = false)
+void processPhoneBookEntries(string phoneBookName, string searchTerm, bool allowMultipleEntries = false)
 {
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
 	uint entryCount = 0;
@@ -44,7 +44,7 @@ void processPhoneBookEntries(string phoneBookName, string searchTerm, bool break
 
 				++entryCount;
 
-				if(breakOnFound)
+				if(allowMultipleEntries)
 				{
 					break;
 				}
