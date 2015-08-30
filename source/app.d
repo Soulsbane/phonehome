@@ -58,7 +58,7 @@ void processPhoneBookEntries(string phoneBookName, string searchTerm, bool break
 
 	if(entryCount == 0)
 	{
-		writeln("No entries found matching ", searchTerm, " in the phonebook.");
+		writeln("Can't phone home! No entries found matching ", searchTerm, " in the phonebook.");
 	}
 }
 
@@ -83,12 +83,19 @@ string loadPhoneBook(immutable string phoneBookName)
 
 void main(string[] arguments)
 {
-	debug
+	if(arguments.length > 1)
 	{
-		processPhoneBookEntries("test.csv", arguments[1]);
+		debug
+		{
+			processPhoneBookEntries("test.csv", arguments[1]);
+		}
+		else
+		{
+			processPhoneBookEntries("phonebook.csv", arguments[1]);
+		}
 	}
 	else
 	{
-		processPhoneBookEntries("phonebook.csv", arguments[1]);
+		writeln("No arguments supplied!");
 	}
 }
