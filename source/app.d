@@ -1,5 +1,4 @@
 import std.stdio;
-import std.csv;
 import std.string : lineSplitter, strip, toLower, indexOf, startsWith, CaseSensitive;
 import std.file : exists, readText;
 import std.array : empty, split;
