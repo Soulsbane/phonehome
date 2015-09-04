@@ -29,7 +29,7 @@ string pluralizeEntryCount(immutable uint count) pure @safe
 	return pluralizedNumber;
 }
 
-void processPhoneBookEntries(immutable string phoneBookName, immutable string searchTerm, bool allowMultipleEntries = false) @safe
+void processPhoneBookEntries(immutable string phoneBookName, immutable string searchTerm, bool allowMultipleEntries = false) @trusted
 {
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
 	uint entryCount = 0;
