@@ -2,6 +2,7 @@ import std.stdio;
 import std.string : lineSplitter, strip, toLower, indexOf, startsWith, CaseSensitive;
 import std.file : exists, readText;
 import std.array : empty, split;
+import std.conv : to;
 
 struct PhoneBookEntry
 {
@@ -22,7 +23,6 @@ string pluralizeEntryCount(immutable uint count) pure @safe
 	}
 	else
 	{
-		import std.conv : to;
 		pluralizedNumber = to!string(count) ~ " entries";
 	}
 
@@ -48,7 +48,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			if(line.indexOf(searchTerm, CaseSensitive.no) != -1)
 			{
 				immutable string[] values = line.split(";");
-				PhoneBookEntry entry = { values[0],values[1], values[2], values[3], values[4] }; // FIXME: Maybe more size checking here before using values
+				PhoneBookEntry entry = { values[0], values[1], values[2], values[3], values[4] }; // FIXME: Maybe more size checking here before using values
 
 				entries ~= entry;
 				++entryCount;
