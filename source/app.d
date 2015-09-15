@@ -18,18 +18,17 @@ struct PhoneBookEntry
 
 class PhoneHomeArgs : CommandLineArgs
 {
-	override void onInvalidArgs(CommandLineArgTypes argType, string[] arguments)
+	override void onValidArgs()
 	{
-		if(arguments.length > 1)
+		string fileName = rawArguments_[0];
+		debug
 		{
-			debug
-			{
-				processPhoneBookEntries("test.csv", arguments[1]);
-			}
-			else
-			{
-				processPhoneBookEntries("phonebook.csv", arguments[1]);
-			}
+			writeln("Debug: ", get!bool("multiple"));
+			processPhoneBookEntries("test.csv", fileName, get!bool("multiple"));
+		}
+		else
+		{
+			processPhoneBookEntries("phonebook.csv", fileName, get!bool("multiple"));
 		}
 	}
 }
@@ -128,5 +127,7 @@ string loadPhoneBook(immutable string phoneBookName) @safe
 void main(string[] arguments)
 {
 	auto args = new PhoneHomeArgs;
-	args.processArgs(arguments);
+
+	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
+	args.processArgs(arguments, true);
 }
