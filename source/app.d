@@ -1,5 +1,5 @@
 import std.stdio;
-import std.string : lineSplitter, strip, toLower, indexOf, startsWith, CaseSensitive;
+import std.string : lineSplitter, strip, toLower, indexOf, startsWith, removechars, CaseSensitive;
 import std.file : exists, readText;
 import std.array : empty, split;
 import std.conv : to;
@@ -14,6 +14,24 @@ struct PhoneBookEntry
 	string homeNumber;
 	string cellNumber;
 	string workNumber;
+}
+
+class PhoneHomeArgs : CommandLineArgs
+{
+	override void onInvalidArgs(CommandLineArgTypes argType, string[] arguments)
+	{
+		if(arguments.length > 1)
+		{
+			debug
+			{
+				processPhoneBookEntries("test.csv", arguments[1]);
+			}
+			else
+			{
+				processPhoneBookEntries("phonebook.csv", arguments[1]);
+			}
+		}
+	}
 }
 
 string pluralizeEntryCount(immutable uint count) pure @safe
@@ -109,19 +127,6 @@ string loadPhoneBook(immutable string phoneBookName) @safe
 
 void main(string[] arguments)
 {
-	if(arguments.length > 1)
-	{
-		debug
-		{
-			processPhoneBookEntries("test.csv", arguments[1]);
-		}
-		else
-		{
-			processPhoneBookEntries("phonebook.csv", arguments[1]);
-		}
-	}
-	else
-	{
-		writeln("No arguments supplied!");
-	}
+	auto args = new PhoneHomeArgs;
+	args.processArgs(arguments);
 }
