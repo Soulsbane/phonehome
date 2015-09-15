@@ -23,7 +23,6 @@ class PhoneHomeArgs : CommandLineArgs
 		string fileName = rawArguments_[0];
 		debug
 		{
-			writeln("Debug: ", get!bool("multiple"));
 			processPhoneBookEntries("test.csv", fileName, get!bool("multiple"));
 		}
 		else
