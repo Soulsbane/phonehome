@@ -129,5 +129,5 @@ void main(string[] arguments)
 	auto args = new PhoneHomeArgs;
 
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
-	args.processArgs(arguments, true);
+	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
