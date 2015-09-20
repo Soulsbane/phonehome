@@ -98,17 +98,17 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 		Mustache mustache;
 		auto context = new Mustache.Context;
 
+		mustache.path  = "templates";
+
 		foreach (entry; entries) {
-		    auto sub = context.addSubContext("entries");
-		    sub["name"] = entry.name;
-		    sub["homeNumber"] = entry.homeNumber;
-		    sub["cellNumber"] = entry.cellNumber;
-		    sub["workNumber"] = entry.workNumber;
+		    context["name"] = entry.name;
+		    context["homeNumber"] = entry.homeNumber;
+		    context["cellNumber"] = entry.cellNumber;
+		    context["workNumber"] = entry.workNumber;
+
+			writeln(mustache.render("default", context));
 		}
 
-		mustache.path  = "templates";
-		//mustache.level = Mustache.CacheLevel.no;
-		writeln(mustache.render("default", context));
 	}
 }
 
