@@ -4,6 +4,9 @@ import std.file : exists, readText;
 import std.array : empty, split;
 import std.conv : to;
 
+import mustache;
+alias MustacheEngine!(string) Mustache;
+
 import raijin.keyvalueconfig;
 import raijin.commandlineargs;
 
@@ -92,15 +95,20 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 	{
 		writeln("Found ", pluralizeEntryCount(entryCount), ":\n");
 
-		foreach(entry; entries)
-		{
-			writeln("     -==Entry==-");
-			writeln("NAME: ", entry.name);
-			writeln("HOME: ", entry.homeNumber);
-			writeln("CELLPHONE: ", entry.cellNumber);
-			writeln("WORK: ", entry.workNumber);
-			writeln();
+		Mustache mustache;
+		auto context = new Mustache.Context;
+
+		foreach (entry; entries) {
+		    auto sub = context.addSubContext("entries");
+		    sub["name"] = entry.name;
+		    sub["homeNumber"] = entry.homeNumber;
+		    sub["cellNumber"] = entry.cellNumber;
+		    sub["workNumber"] = entry.workNumber;
 		}
+
+		mustache.path  = "templates";
+		//mustache.level = Mustache.CacheLevel.no;
+		writeln(mustache.render("default", context));
 	}
 }
 
