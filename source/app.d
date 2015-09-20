@@ -9,6 +9,7 @@ alias MustacheEngine!(string) Mustache;
 
 import raijin.keyvalueconfig;
 import raijin.commandlineargs;
+import raijin.stringutils;
 
 struct PhoneBookEntry
 {
@@ -33,22 +34,6 @@ class PhoneHomeArgs : CommandLineArgs
 			processPhoneBookEntries("phonebook.csv", fileName, get!bool("multiple"));
 		}
 	}
-}
-
-string pluralizeEntryCount(immutable uint count) pure @safe
-{
-	string pluralizedNumber;
-
-	if(count == 1)
-	{
-		pluralizedNumber = "1 entry";
-	}
-	else
-	{
-		pluralizedNumber = to!string(count) ~ " entries";
-	}
-
-	return pluralizedNumber;
 }
 
 void processPhoneBookEntries(immutable string phoneBookName, immutable string searchTerm, bool allowMultipleEntries = false) @trusted
@@ -93,7 +78,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 	}
 	else
 	{
-		writeln("Found ", pluralizeEntryCount(entryCount), ":\n");
+		writeln("Found ", pluralize("entry", entryCount), ":\n");
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
