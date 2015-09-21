@@ -11,6 +11,8 @@ import raijin.keyvalueconfig;
 import raijin.commandlineargs;
 import raijin.stringutils;
 
+import configpath;
+
 struct PhoneBookEntry
 {
 	string name;
