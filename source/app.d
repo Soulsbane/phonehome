@@ -22,6 +22,22 @@ struct PhoneBookEntry
 	string workNumber;
 }
 
+class PhoneHomeArgs : CommandLineArgs
+{
+	override void onValidArgs()
+	{
+		string fileName = rawArguments_[0];
+		debug
+		{
+			processPhoneBookEntries("test.csv", fileName, get!bool("multiple"));
+		}
+		else
+		{
+			processPhoneBookEntries("phonebook.csv", fileName, get!bool("multiple"));
+		}
+	}
+}
+
 void processPhoneBookEntries(immutable string phoneBookName, immutable string searchTerm, bool allowMultipleEntries = false) @trusted
 {
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
@@ -104,22 +120,8 @@ string loadPhoneBook(immutable string phoneBookName) @safe
 
 void main(string[] arguments)
 {
-	auto args = new CommandLineArgs;
+	auto args = new PhoneHomeArgs;
 
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
-	bool processed = args.processArgs(arguments, IgnoreFirstArg.yes);
-
-	if(processed)
-	{
-		string searchTerm = args.getSafe(1);
-
-		debug
-		{
-			processPhoneBookEntries("test.csv", searchTerm, args.get!bool("multiple"));
-		}
-		else
-		{
-			processPhoneBookEntries("phonebook.csv", searchTerm, args.get!bool("multiple"));
-		}
-	}
+	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
