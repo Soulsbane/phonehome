@@ -26,14 +26,15 @@ class PhoneHomeArgs : CommandLineArgs
 {
 	override void onValidArgs()
 	{
-		string fileName = rawArguments_[0];
+		string searchTerm = getSafe(1);
+
 		debug
 		{
-			processPhoneBookEntries("test.csv", fileName, get!bool("multiple"));
+			processPhoneBookEntries("test.csv", searchTerm, get!bool("multiple"));
 		}
 		else
 		{
-			processPhoneBookEntries("phonebook.csv", fileName, get!bool("multiple"));
+			processPhoneBookEntries("phonebook.csv", searchTerm, get!bool("multiple"));
 		}
 	}
 }
