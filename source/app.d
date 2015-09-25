@@ -26,7 +26,7 @@ class PhoneHomeArgs : CommandLineArgs
 {
 	override void onValidArgs()
 	{
-		string searchTerm = getSafe(1);
+		string searchTerm = safeGet(1);
 
 		debug
 		{
