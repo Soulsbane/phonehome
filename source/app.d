@@ -58,9 +58,9 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			{
 				immutable string[] values = line.split(";");
 
-				if(values.length == PHONE_BOOK_ENTRY_SIZE)
+				if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 				{
-					immutable PhoneBookEntry entry = { values[0], values[1], values[2], values[3], values[4] }; // FIXME: Maybe more size checking here before using values
+					immutable PhoneBookEntry entry = { values[0], values[1], values[2], values[3], values[4] };
 
 					entries ~= entry;
 					++entryCount;
