@@ -10,7 +10,7 @@ alias Mustache = MustacheEngine!(string);
 import raijin;
 import configpath;
 
-enum ENTRY_COUNT = [__traits(allMembers, PhoneBookEntry)].length;
+enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
 
 struct PhoneBookEntry
 {
@@ -58,7 +58,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			{
 				immutable string[] values = line.split(";");
 
-				if(values.length == ENTRY_COUNT)
+				if(values.length == PHONE_BOOK_ENTRY_SIZE)
 				{
 					immutable PhoneBookEntry entry = { values[0], values[1], values[2], values[3], values[4] }; // FIXME: Maybe more size checking here before using values
 
