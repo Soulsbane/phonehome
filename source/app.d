@@ -113,8 +113,9 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
+		immutable string defaultTemplateFile = buildNormalizedPath(getTemplateFilesDir(), "default");
 
-		mustache.path  = "templates";
+		createDefaultTemplate();
 
 		foreach (entry; entries) {
 		    context["name"] = entry.name;
@@ -122,7 +123,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 		    context["cellNumber"] = entry.cellNumber;
 		    context["workNumber"] = entry.workNumber;
 
-			writeln(mustache.render("default", context));
+			writeln(mustache.render(defaultTemplateFile, context));
 		}
 
 	}
@@ -156,6 +157,19 @@ void createConfigDirs()
 	createConfigDir("config");
 	createConfigDir("phonebooks");
 	createConfigDir("templates");
+}
+
+void createDefaultTemplate()
+{
+	immutable string defaultTemplateFile = buildNormalizedPath(getTemplateFilesDir(), "default.mustache");
+
+	if(!exists(defaultTemplateFile))
+	{
+		immutable string defaultTemplateText = import("default.mustache");
+		auto f = File(defaultTemplateFile, "w+");
+		
+		f.write(defaultTemplateText);
+	}
 }
 
 void main(string[] arguments)
