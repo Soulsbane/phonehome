@@ -38,6 +38,31 @@ class PhoneHomeArgs : CommandLineArgs
 	}
 }
 
+/*
+*	Generates an PhoneBookEntry based on how many fields the struct PhoneBookEntry contains.
+*/
+private string generateEntry()
+{
+	string entryString = "immutable PhoneBookEntry entry = {";
+	int i;
+
+	while(i < PHONE_BOOK_ENTRY_SIZE)
+	{
+		if(i == PHONE_BOOK_ENTRY_SIZE - 1)
+		{
+			entryString ~= ("values[" ~ i.to!string ~ "]");
+		}
+		else
+		{
+			entryString ~= ("values[" ~ i.to!string ~ "], ");
+		}
+		++i;
+	}
+
+	entryString ~= "};";
+	return entryString;
+}
+
 void processPhoneBookEntries(immutable string phoneBookName, immutable string searchTerm, bool allowMultipleEntries = false) @trusted
 {
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
@@ -60,8 +85,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 				if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 				{
-					immutable PhoneBookEntry entry = { values[0], values[1], values[2], values[3], values[4] };
-
+					mixin(generateEntry());
 					entries ~= entry;
 					++entryCount;
 				}
