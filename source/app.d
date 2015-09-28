@@ -1,10 +1,9 @@
 import std.stdio;
 import std.string : lineSplitter, strip, toLower, indexOf, startsWith, removechars, CaseSensitive;
-import std.file : exists, readText;
+import std.file : exists, readText, mkdirRecurse;
 import std.array : empty, split;
 import std.conv : to;
 import std.path : buildNormalizedPath;
-import std.file : mkdirRecurse;
 
 import mustache;
 alias Mustache = MustacheEngine!(string);
@@ -152,10 +151,18 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 	return text;
 }
 
+void createConfigDirs()
+{
+	createConfigDir("config");
+	createConfigDir("phonebooks");
+	createConfigDir("templates");
+}
+
 void main(string[] arguments)
 {
 	auto args = new PhoneHomeArgs;
 
+	createConfigDirs();
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
 	args.processArgs(arguments, IgnoreFirstArg.yes);
 }

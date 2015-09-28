@@ -1,6 +1,8 @@
 module configpath;
 
 import std.path : buildNormalizedPath;
+import std.file : exists, mkdirRecurse;
+
 import standardpaths : writablePath, StandardPath;
 
 enum string organizationName = "Raijinsoft";
@@ -24,4 +26,14 @@ string getTemplateFilesDir() @safe
 string getPhoneBookFilesDir() @safe
 {
 	return buildNormalizedPath(writablePath(StandardPath.Config), organizationName, applicationName, "phonebooks");
+}
+
+void createConfigDir(string path)
+{
+	string normalPath = buildNormalizedPath(getConfigDir(), path);
+
+	if(!exists(normalPath))
+	{
+		mkdirRecurse(normalPath);
+	}
 }
