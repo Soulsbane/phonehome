@@ -105,7 +105,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 	if(entryCount == 0)
 	{
-		writeln("Can't phone home! No entries found matching ", searchTerm, " in the phonebook.");
+		writeln("No entries found matching ", searchTerm, " in phonebook: ", phoneBookName);
 	}
 	else
 	{
@@ -167,7 +167,7 @@ void createDefaultTemplate()
 	{
 		immutable string defaultTemplateText = import("default.mustache");
 		auto f = File(defaultTemplateFile, "w+");
-		
+
 		f.write(defaultTemplateText);
 	}
 }
