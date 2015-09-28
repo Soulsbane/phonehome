@@ -3,6 +3,8 @@ import std.string : lineSplitter, strip, toLower, indexOf, startsWith, removecha
 import std.file : exists, readText;
 import std.array : empty, split;
 import std.conv : to;
+import std.path : buildNormalizedPath;
+import std.file : mkdirRecurse;
 
 import mustache;
 alias Mustache = MustacheEngine!(string);
@@ -127,17 +129,21 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 	}
 }
 
-string loadPhoneBook(immutable string phoneBookName) @safe
+string loadPhoneBook(immutable string phoneBookName) @trusted
 {
 	string text;
+	immutable string phoneBookPath = buildNormalizedPath(getPhoneBookFilesDir(), phoneBookName);
+	immutable string configFilesDir = getConfigFilesDir();
+	immutable string phoneBookFilesDir = getPhoneBookFilesDir();
 
-	if(exists(phoneBookName))
+	if(exists(phoneBookPath))
 	{
-		text = readText(phoneBookName);
+		text = readText(phoneBookPath);
 	}
 	else
 	{
-		auto f = File(phoneBookName, "w+"); // Create an empty phone book and insert dummy data.
+		mkdirRecurse(phoneBookFilesDir);
+		auto f = File(phoneBookPath, "w+"); // Create an empty phone book and insert dummy data.
 
 		text = "Uncle Tom;Tommy;123-4567;987-6543;211-2345";
 		f.write(text);
