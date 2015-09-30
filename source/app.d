@@ -80,21 +80,21 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 		}
 		else
 		{
-			if(line.indexOf(searchTerm, CaseSensitive.no) != -1)
-			{
-				immutable string[] values = line.split(";");
+			immutable string[] values = line.split(";");
 
-				if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
+			if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
+			{
+				mixin(generateEntry());
+				if(entry.name.find(searchTerm))
 				{
-					mixin(generateEntry());
 					entries ~= entry;
 					++entryCount;
 				}
+			}
 
-				if(!allowMultipleEntries)
-				{
-					break;
-				}
+			if(!allowMultipleEntries)
+			{
+				break;
 			}
 		}
 	}
