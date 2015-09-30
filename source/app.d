@@ -96,10 +96,6 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 					break;
 				}
 			}
-			else
-			{
-				continue;
-			}
 		}
 	}
 
