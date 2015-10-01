@@ -85,7 +85,8 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 			{
 				mixin(generateEntry());
-				if(entry.name.find(searchTerm))
+
+				if(entry.name.find(searchTerm) || entry.nickName.find(searchTerm))
 				{
 					entries ~= entry;
 					++entryCount;
