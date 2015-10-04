@@ -9,7 +9,6 @@ import mustache;
 alias Mustache = MustacheEngine!(string);
 
 import raijin;
-import configpath;
 
 enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
 
@@ -110,7 +109,8 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
-		immutable string defaultTemplateFile = buildNormalizedPath(getTemplateFilesDir(), "default");
+		auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
+		immutable string defaultTemplateFile = buildNormalizedPath(configPath.getConfigDir("templates"), "default");
 
 		createDefaultTemplate();
 
@@ -129,9 +129,10 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 string loadPhoneBook(immutable string phoneBookName) @trusted
 {
 	string text;
-	immutable string phoneBookPath = buildNormalizedPath(getPhoneBookFilesDir(), phoneBookName);
-	immutable string configFilesDir = getConfigFilesDir();
-	immutable string phoneBookFilesDir = getPhoneBookFilesDir();
+	auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
+	immutable string phoneBookPath = buildNormalizedPath(configPath.getConfigDir("phonebooks"), phoneBookName);
+	immutable string configFilesDir = configPath.getConfigDir("config");
+	immutable string phoneBookFilesDir = configPath.getConfigDir("phonebooks");
 
 	if(exists(phoneBookPath))
 	{
@@ -151,14 +152,17 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 
 void createConfigDirs()
 {
-	createConfigDir("config");
-	createConfigDir("phonebooks");
-	createConfigDir("templates");
+	auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
+
+	configPath.createConfigDir("config");
+	configPath.createConfigDir("phonebooks");
+	configPath.createConfigDir("templates");
 }
 
 void createDefaultTemplate()
 {
-	immutable string defaultTemplateFile = buildNormalizedPath(getTemplateFilesDir(), "default.mustache");
+	auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
+	immutable string defaultTemplateFile = buildNormalizedPath(configPath.getConfigDir("templates"), "default.mustache");
 
 	if(!exists(defaultTemplateFile))
 	{
