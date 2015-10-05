@@ -11,6 +11,7 @@ alias Mustache = MustacheEngine!(string);
 import raijin;
 
 enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
+ConfigPath _AppConfig;
 
 struct PhoneBookEntry
 {
@@ -109,8 +110,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
-		auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
-		immutable string defaultTemplateFile = buildNormalizedPath(configPath.getConfigDir("templates"), "default");
+		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfig.getConfigDir("templates"), "default");
 
 		createDefaultTemplate();
 
@@ -129,10 +129,9 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 string loadPhoneBook(immutable string phoneBookName) @trusted
 {
 	string text;
-	auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
-	immutable string phoneBookPath = buildNormalizedPath(configPath.getConfigDir("phonebooks"), phoneBookName);
-	immutable string configFilesDir = configPath.getConfigDir("config");
-	immutable string phoneBookFilesDir = configPath.getConfigDir("phonebooks");
+	immutable string phoneBookPath = buildNormalizedPath(_AppConfig.getConfigDir("phonebooks"), phoneBookName);
+	immutable string configFilesDir = _AppConfig.getConfigDir("config");
+	immutable string phoneBookFilesDir = _AppConfig.getConfigDir("phonebooks");
 
 	if(exists(phoneBookPath))
 	{
@@ -152,17 +151,14 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 
 void createConfigDirs()
 {
-	auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
-
-	configPath.createConfigDir("config");
-	configPath.createConfigDir("phonebooks");
-	configPath.createConfigDir("templates");
+	_AppConfig.createConfigDir("config");
+	_AppConfig.createConfigDir("phonebooks");
+	_AppConfig.createConfigDir("templates");
 }
 
 void createDefaultTemplate()
 {
-	auto configPath = new ConfigPath("Raijinsoft", "PhoneHome");
-	immutable string defaultTemplateFile = buildNormalizedPath(configPath.getConfigDir("templates"), "default.mustache");
+	immutable string defaultTemplateFile = buildNormalizedPath(_AppConfig.getConfigDir("templates"), "default.mustache");
 
 	if(!exists(defaultTemplateFile))
 	{
@@ -176,6 +172,7 @@ void createDefaultTemplate()
 void main(string[] arguments)
 {
 	auto args = new PhoneHomeArgs;
+	_AppConfig = new ConfigPath("Raijinsoft", "PhoneHome");
 
 	createConfigDirs();
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
