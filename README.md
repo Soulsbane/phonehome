@@ -27,3 +27,11 @@ Be sure to save your phone book to
 
 ###Example Phone Book
 >Uncle Tom;Tommy;123-4567;987-6543;211-2345
+
+#FAQ
+How do I add an entry to the phonebook?
+
+*PhoneHome does not contain a way to add an entry from the command line. You can simple edit your phonebook.csv(or whatever you called it) by adding a entry at the bottom.*
+
+Can you add feature X?
+PhoneHome is meant to be lightweight and fast with minimal features. But by all means create a enhancement request in the issue tracker if you think it might be a valuable feature.
