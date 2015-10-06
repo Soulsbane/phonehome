@@ -86,17 +86,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			{
 				mixin(generateEntry());
 				auto args = new CommandLineArgs;
-				immutable bool caseSensitive = args.get!bool("casesensitive");
-				CaseSensitive cs;
-
-				if(caseSensitive)
-				{
-					cs = CaseSensitive.yes;
-				}
-				else
-				{
-					cs = CaseSensitive.no;
-				}
+				auto cs = boolToFlag!CaseSensitive(args.get!bool("casesensitive"));
 
 				if(entry.name.find(searchTerm, cs) || entry.nickName.find(searchTerm, cs))
 				{
