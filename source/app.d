@@ -85,8 +85,20 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 			{
 				mixin(generateEntry());
+				auto args = new CommandLineArgs;
+				immutable bool caseSensitive = args.get!bool("casesensitive");
+				CaseSensitive cs;
 
-				if(entry.name.find(searchTerm) || entry.nickName.find(searchTerm))
+				if(caseSensitive)
+				{
+					cs = CaseSensitive.yes;
+				}
+				else
+				{
+					cs = CaseSensitive.no;
+				}
+
+				if(entry.name.find(searchTerm, cs) || entry.nickName.find(searchTerm, cs))
 				{
 					entries ~= entry;
 					++entryCount;
@@ -176,5 +188,7 @@ void main(string[] arguments)
 
 	createConfigDirs();
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
+	args.addCommand("casesensitive", "false", "Enable case sensitive matching");
+
 	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
