@@ -106,7 +106,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 	}
 	else
 	{
-		writeln("Found ", pluralize("entry", entryCount), ":\n");
+		writeln("Found ", to!string(entryCount), " ", pluralize("entry", entryCount), ":\n");
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
