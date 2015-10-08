@@ -81,10 +81,11 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 		else
 		{
 			immutable string[] values = line.split(";");
+			immutable string generatedStruct = generateEntry();
 
 			if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 			{
-				mixin(generateEntry());
+				mixin(generatedStruct);
 				auto args = new CommandLineArgs;
 				auto cs = boolToFlag!CaseSensitive(args.get!bool("casesensitive"));
 
