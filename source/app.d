@@ -133,7 +133,6 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 {
 	string text;
 	immutable string phoneBookPath = buildNormalizedPath(_AppConfig.getConfigDir("phonebooks"), phoneBookName);
-	immutable string configFilesDir = _AppConfig.getConfigDir("config");
 	immutable string phoneBookFilesDir = _AppConfig.getConfigDir("phonebooks");
 
 	if(exists(phoneBookPath))
