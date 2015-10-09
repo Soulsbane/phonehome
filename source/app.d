@@ -96,7 +96,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 				}
 			}
 
-			if(!allowMultipleEntries)
+			if(!allowMultipleEntries && entryCount > 0)
 			{
 				break;
 			}
