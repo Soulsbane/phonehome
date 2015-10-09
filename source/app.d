@@ -1,4 +1,4 @@
-import std.stdio;
+import std.stdio : writeln;
 import std.string : lineSplitter, strip, toLower, indexOf, startsWith, removechars, CaseSensitive;
 import std.file : exists, readText, mkdirRecurse;
 import std.array : empty, split;
