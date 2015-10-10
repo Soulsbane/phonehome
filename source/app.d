@@ -87,7 +87,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			{
 				mixin(generatedStruct);
 				auto args = new CommandLineArgs;
-				auto cs = boolToFlag!CaseSensitive(args.get!bool("case-sensitive"));
+				auto cs = cast(CaseSensitive)(args.get!bool("case-sensitive"));
 
 				if(entry.name.find(searchTerm, cs) || entry.nickName.find(searchTerm, cs))
 				{
