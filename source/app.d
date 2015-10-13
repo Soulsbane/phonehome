@@ -82,23 +82,35 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 		{
 			immutable string[] values = line.split(";");
 			immutable string generatedStruct = generateEntry();
+			auto args = new CommandLineArgs;
+			immutable bool listAllEntries = args.get!bool("list-all");
 
 			if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 			{
 				mixin(generatedStruct);
-				auto args = new CommandLineArgs;
 				auto cs = cast(CaseSensitive)(args.get!bool("case-sensitive"));
 
-				if(entry.name.find(searchTerm, cs) || entry.nickName.find(searchTerm, cs))
+				if(listAllEntries)
 				{
 					entries ~= entry;
 					++entryCount;
+				}
+				else
+				{
+					if(entry.name.find(searchTerm, cs) || entry.nickName.find(searchTerm, cs))
+					{
+						entries ~= entry;
+						++entryCount;
+					}
 				}
 			}
 
 			if(!allowMultipleEntries && entryCount > 0)
 			{
-				break;
+				if(!listAllEntries)
+				{
+					break;
+				}
 			}
 		}
 	}
@@ -125,7 +137,6 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 			writeln(mustache.render(defaultTemplateFile, context));
 		}
-
 	}
 }
 
@@ -179,6 +190,7 @@ void main(string[] arguments)
 	createConfigDirs();
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
 	args.addCommand("case-sensitive", "false", "Enable case sensitive matching");
+	args.addCommand("list-all", "false", "Output every entry in the phone book.");
 
 	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
