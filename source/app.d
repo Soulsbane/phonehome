@@ -11,7 +11,7 @@ alias Mustache = MustacheEngine!(string);
 import raijin;
 
 enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
-ConfigPath _AppConfig;
+ConfigPath _AppConfigPath;
 
 struct PhoneBookEntry
 {
@@ -125,7 +125,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
-		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfig.getConfigDir("templates"), "default");
+		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), "default");
 
 		createDefaultTemplate();
 
@@ -143,8 +143,8 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 string loadPhoneBook(immutable string phoneBookName) @trusted
 {
 	string text;
-	immutable string phoneBookPath = buildNormalizedPath(_AppConfig.getConfigDir("phonebooks"), phoneBookName);
-	immutable string phoneBookFilesDir = _AppConfig.getConfigDir("phonebooks");
+	immutable string phoneBookPath = buildNormalizedPath(_AppConfigPath.getConfigDir("phonebooks"), phoneBookName);
+	immutable string phoneBookFilesDir = _AppConfigPath.getConfigDir("phonebooks");
 
 	if(exists(phoneBookPath))
 	{
@@ -164,14 +164,14 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 
 void createConfigDirs()
 {
-	_AppConfig.createConfigDir("config");
-	_AppConfig.createConfigDir("phonebooks");
-	_AppConfig.createConfigDir("templates");
+	_AppConfigPath.createConfigDir("config");
+	_AppConfigPath.createConfigDir("phonebooks");
+	_AppConfigPath.createConfigDir("templates");
 }
 
 void createDefaultTemplate()
 {
-	immutable string defaultTemplateFile = buildNormalizedPath(_AppConfig.getConfigDir("templates"), "default.mustache");
+	immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), "default.mustache");
 
 	if(!exists(defaultTemplateFile))
 	{
@@ -185,7 +185,7 @@ void createDefaultTemplate()
 void main(string[] arguments)
 {
 	auto args = new PhoneHomeArgs;
-	_AppConfig = new ConfigPath("Raijinsoft", "PhoneHome");
+	_AppConfigPath = new ConfigPath("Raijinsoft", "PhoneHome");
 
 	createConfigDirs();
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
