@@ -64,6 +64,19 @@ private string generateEntry()
 	return entryString;
 }
 
+private string generateMustacheMembers()
+{
+	auto phoneBookEntryMembers = [__traits(allMembers, PhoneBookEntry)];
+	string genStr;
+
+	foreach(member; phoneBookEntryMembers)
+	{
+		genStr ~= "context[\"" ~ member ~ "\"] = entry." ~ member ~ ";";
+	}
+
+	return genStr;
+}
+
 void processPhoneBookEntries(immutable string phoneBookName, immutable string searchTerm, bool allowMultipleEntries = false) @trusted
 {
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
@@ -131,11 +144,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		foreach (entry; entries)
 		{
-		    context["name"] = entry.name;
-		    context["homeNumber"] = entry.homeNumber;
-		    context["cellNumber"] = entry.cellNumber;
-		    context["workNumber"] = entry.workNumber;
-
+			mixin(generateMustacheMembers());
 			writeln(mustache.render(defaultTemplateFile, context));
 		}
 	}
