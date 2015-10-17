@@ -129,7 +129,8 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		createDefaultTemplate();
 
-		foreach (entry; entries) {
+		foreach (entry; entries)
+		{
 		    context["name"] = entry.name;
 		    context["homeNumber"] = entry.homeNumber;
 		    context["cellNumber"] = entry.cellNumber;
