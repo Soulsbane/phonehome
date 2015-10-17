@@ -13,6 +13,8 @@ import raijin;
 enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
 ConfigPath _AppConfigPath;
 
+enum DEFAULT_PHONE_BOOK_NAME = "phonebook.csv";
+
 struct PhoneBookEntry
 {
 	string name;
@@ -34,7 +36,13 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 		else
 		{
-			processPhoneBookEntries("phonebook.csv", searchTerm, get!bool("multiple"));
+			string phoneBookName = get("phonebook");
+
+			if(phoneBookName == "true") // INFO: The user passed -phonebook instead of -phonebook=name.csv causing CommandLineArgs to set phoneBookName to true
+			{
+				phoneBookName = DEFAULT_PHONE_BOOK_NAME;
+			}
+			processPhoneBookEntries(phoneBookName, searchTerm, get!bool("multiple"));
 		}
 	}
 }
@@ -201,6 +209,7 @@ void main(string[] arguments)
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
 	args.addCommand("case-sensitive", "false", "Enable case sensitive matching");
 	args.addCommand("list-all", "false", "Output every entry in the phone book.");
+	args.addCommand("phonebook", "phonebook.csv", "Set the phonebook to use.");
 
 	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
