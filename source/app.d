@@ -36,11 +36,16 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 		else
 		{
-			string phoneBookName = get("phonebook");
+			string phoneBookName;
+			immutable bool isFlag = isFlag("phonebook");
 
-			if(phoneBookName == "true") // INFO: The user passed -phonebook instead of -phonebook=name.csv causing CommandLineArgs to set phoneBookName to true
+			if(isFlag) // INFO: The user passed -phonebook instead of -phonebook=name.csv causing CommandLineArgs to set phoneBookName to true
 			{
 				phoneBookName = DEFAULT_PHONE_BOOK_NAME;
+			}
+			else
+			{
+				phoneBookName = get("phonebook");
 			}
 			processPhoneBookEntries(phoneBookName, searchTerm, get!bool("multiple"));
 		}
