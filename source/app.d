@@ -26,7 +26,7 @@ struct PhoneBookEntry
 
 class PhoneHomeArgs : CommandLineArgs
 {
-	override void onValidArgs()
+	override void onValidArgs() @trusted
 	{
 		string searchTerm = safeGet(1);
 
@@ -38,6 +38,9 @@ class PhoneHomeArgs : CommandLineArgs
 		{
 			string phoneBookName;
 			immutable bool isFlag = isFlag("phonebook");
+			KeyValueConfig config;
+			immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
+			immutable bool loaded = config.loadFile(configFilePath);
 
 			if(isFlag) // INFO: The user passed -phonebook instead of -phonebook=name.csv causing CommandLineArgs to set phoneBookName to true
 			{
@@ -47,7 +50,15 @@ class PhoneHomeArgs : CommandLineArgs
 			{
 				phoneBookName = get("phonebook");
 			}
+
 			processPhoneBookEntries(phoneBookName, searchTerm, get!bool("multiple"));
+
+			if(!loaded)
+			{
+				writeln("FAILED to load configuration file!");
+			}
+
+			config["phonebook"] = phoneBookName;
 		}
 	}
 }
@@ -185,6 +196,17 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 	return text;
 }
 
+void createConfigFile()
+{
+	immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
+
+	if(!exists(configFilePath))
+	{
+		auto f = File(configFilePath, "w+"); // Create an empty phone book and insert dummy data.
+		f.writeln("phonebook=phonebook.csv");
+	}
+}
+
 void createConfigDirs()
 {
 	_AppConfigPath.createConfigDir("config");
@@ -211,6 +233,8 @@ void main(string[] arguments)
 	_AppConfigPath = new ConfigPath("Raijinsoft", "PhoneHome");
 
 	createConfigDirs();
+	createConfigFile();
+
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
 	args.addCommand("case-sensitive", "false", "Enable case sensitive matching");
 	args.addCommand("list-all", "false", "Output every entry in the phone book.");
