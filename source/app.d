@@ -51,14 +51,16 @@ class PhoneHomeArgs : CommandLineArgs
 				phoneBookName = get("phonebook");
 			}
 
-			processPhoneBookEntries(phoneBookName, searchTerm, get!bool("multiple"));
-
-			if(!loaded)
+			if(loaded)
+			{
+				config["phonebook"] = phoneBookName;
+			}
+			else
 			{
 				writeln("FAILED to load configuration file!");
 			}
 
-			config["phonebook"] = phoneBookName;
+			processPhoneBookEntries(phoneBookName, searchTerm, get!bool("multiple"));
 		}
 	}
 }
