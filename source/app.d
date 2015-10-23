@@ -204,7 +204,7 @@ void createConfigFile()
 
 	if(!exists(configFilePath))
 	{
-		auto f = File(configFilePath, "w+"); // Create an empty phone book and insert dummy data.
+		auto f = File(configFilePath, "w+");
 		f.writeln("phonebook=phonebook.csv");
 	}
 }
