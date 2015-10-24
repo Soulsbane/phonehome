@@ -11,9 +11,9 @@ alias Mustache = MustacheEngine!(string);
 import raijin;
 
 enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
-ConfigPath _AppConfigPath;
-
 enum DEFAULT_PHONE_BOOK_NAME = "phonebook.csv";
+
+ConfigPath _AppConfigPath;
 
 struct PhoneBookEntry
 {
