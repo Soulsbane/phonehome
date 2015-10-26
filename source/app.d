@@ -14,6 +14,7 @@ enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
 enum DEFAULT_PHONE_BOOK_NAME = "phonebook.csv";
 
 ConfigPath _AppConfigPath;
+KeyValueConfig _AppConfig;
 
 struct PhoneBookEntry
 {
@@ -36,11 +37,18 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 		else
 		{
+			immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
+			processPhoneBookEntries(get("phonebook"), searchTerm, get!bool("multiple"));
+		}
+
+	}
+
+	override void onValidArg(immutable string argument) @trusted
+	{
+		if(argument == "phonebook")
+		{
 			string phoneBookName;
 			immutable bool isFlag = isFlag("phonebook");
-			KeyValueConfig config;
-			immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
-			immutable bool loaded = config.loadFile(configFilePath);
 
 			if(isFlag) // INFO: The user passed -phonebook instead of -phonebook=name.csv causing CommandLineArgs to set phoneBookName to true
 			{
@@ -50,17 +58,9 @@ class PhoneHomeArgs : CommandLineArgs
 			{
 				phoneBookName = get("phonebook");
 			}
-
-			if(loaded)
-			{
-				config["phonebook"] = phoneBookName;
-			}
-			else
-			{
-				writeln("FAILED to load configuration file!");
-			}
-
-			processPhoneBookEntries(phoneBookName, searchTerm, get!bool("multiple"));
+			writeln("onValidArg: ", phoneBookName);
+			_AppConfig["phonebook"] = phoneBookName;
+			_AppConfig.save();
 		}
 	}
 }
@@ -198,22 +198,28 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 	return text;
 }
 
-void createConfigFile()
+void setupAppConfig()
 {
 	immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
+	bool loaded;
+
+	_AppConfigPath.createConfigDir("config");
+	_AppConfigPath.createConfigDir("phonebooks");
+	_AppConfigPath.createConfigDir("templates");
 
 	if(!exists(configFilePath))
 	{
 		auto f = File(configFilePath, "w+");
 		f.writeln("phonebook=phonebook.csv");
-	}
-}
 
-void createConfigDirs()
-{
-	_AppConfigPath.createConfigDir("config");
-	_AppConfigPath.createConfigDir("phonebooks");
-	_AppConfigPath.createConfigDir("templates");
+	}
+
+	loaded = _AppConfig.loadFile(configFilePath);
+
+	if(!loaded)
+	{
+		writeln("FAILED to load configuration file!");
+	}
 }
 
 void createDefaultTemplate()
@@ -232,15 +238,15 @@ void createDefaultTemplate()
 void main(string[] arguments)
 {
 	auto args = new PhoneHomeArgs;
-	_AppConfigPath = new ConfigPath("Raijinsoft", "PhoneHome");
 
-	createConfigDirs();
-	createConfigFile();
+	_AppConfigPath = new ConfigPath("Raijinsoft", "PhoneHome");
+	setupAppConfig();
 
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
 	args.addCommand("case-sensitive", "false", "Enable case sensitive matching");
 	args.addCommand("list-all", "false", "Output every entry in the phone book.");
 	args.addCommand("phonebook", "phonebook.csv", "Set the phonebook to use.");
+	// TODO: Add command for setting output template.
 
 	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
