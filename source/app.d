@@ -14,7 +14,6 @@ enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
 enum DEFAULT_PHONE_BOOK_NAME = "phonebook.csv";
 
 ConfigPath _AppConfigPath;
-KeyValueConfig _AppConfig;
 
 struct PhoneBookEntry
 {
@@ -27,6 +26,17 @@ struct PhoneBookEntry
 
 class PhoneHomeArgs : CommandLineArgs
 {
+	this()
+	{
+		immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
+		immutable bool loaded = config.loadFile(configFilePath);
+
+		if(!loaded)
+		{
+			writeln("FAILED to load configuration file!");
+		}
+	}
+
 	override void onValidArgs() @trusted
 	{
 		string searchTerm = safeGet(1);
@@ -37,7 +47,6 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 		else
 		{
-			immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
 			processPhoneBookEntries(get("phonebook"), searchTerm, get!bool("multiple"));
 		}
 
@@ -58,11 +67,13 @@ class PhoneHomeArgs : CommandLineArgs
 			{
 				phoneBookName = get("phonebook");
 			}
-			writeln("onValidArg: ", phoneBookName);
-			_AppConfig["phonebook"] = phoneBookName;
-			_AppConfig.save();
+
+			config["phonebook"] = phoneBookName;
 		}
 	}
+private:
+	KeyValueConfig config;
+
 }
 
 /*
@@ -201,7 +212,6 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 void setupAppConfig()
 {
 	immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
-	bool loaded;
 
 	_AppConfigPath.createConfigDir("config");
 	_AppConfigPath.createConfigDir("phonebooks");
@@ -211,14 +221,6 @@ void setupAppConfig()
 	{
 		auto f = File(configFilePath, "w+");
 		f.writeln("phonebook=phonebook.csv");
-
-	}
-
-	loaded = _AppConfig.loadFile(configFilePath);
-
-	if(!loaded)
-	{
-		writeln("FAILED to load configuration file!");
 	}
 }
 
@@ -237,9 +239,9 @@ void createDefaultTemplate()
 
 void main(string[] arguments)
 {
+	_AppConfigPath = new ConfigPath("Raijinsoft", "PhoneHome");
 	auto args = new PhoneHomeArgs;
 
-	_AppConfigPath = new ConfigPath("Raijinsoft", "PhoneHome");
 	setupAppConfig();
 
 	args.addCommand("multiple", "false", "Allow multiple matches. For example Bob could match Bob Jones or Bob Evans");
