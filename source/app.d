@@ -47,7 +47,7 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 		else
 		{
-			processPhoneBookEntries(get("phonebook"), searchTerm, get!bool("multiple"));
+			processPhoneBookEntries(config["phonebook"], searchTerm, get!bool("multiple"));
 		}
 
 	}
