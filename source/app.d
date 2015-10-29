@@ -70,6 +70,10 @@ class PhoneHomeArgs : CommandLineArgs
 
 			config["phonebook"] = phoneBookName;
 		}
+		if(argument == "template")
+		{
+			config["template"] = get("template");
+		}
 	}
 private:
 	KeyValueConfig config;
@@ -119,6 +123,14 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
 	uint entryCount = 0;
 	PhoneBookEntry[] entries;
+	KeyValueConfig config;
+	immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
+	immutable bool loaded = config.loadFile(configFilePath);
+
+	if(!loaded)
+	{
+		writeln("FAILED to load configuration file!");
+	}
 
 	foreach(line; lines)
 	{
@@ -175,7 +187,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
-		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), "default");
+		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), config.get("template", "default"));
 
 		createDefaultTemplate();
 
@@ -249,6 +261,7 @@ void main(string[] arguments)
 	args.addCommand("case-sensitive", "false", "Enable case sensitive matching");
 	args.addCommand("list-all", "false", "Output every entry in the phone book.");
 	args.addCommand("phonebook", "phonebook.csv", "Set the phonebook to use.");
+	args.addCommand("template", "default", "Set the output template to use.");
 	// TODO: Add command for setting output template.
 
 	args.processArgs(arguments, IgnoreFirstArg.yes);
