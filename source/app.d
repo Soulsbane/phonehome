@@ -74,6 +74,8 @@ class PhoneHomeArgs : CommandLineArgs
 		{
 			config["template"] = get("template");
 		}
+
+		config.save();
 	}
 private:
 	KeyValueConfig config;
