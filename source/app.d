@@ -202,7 +202,8 @@ string loadPhoneBook(immutable string phoneBookName) @trusted
 		mkdirRecurse(phoneBookFilesDir);
 		auto f = File(phoneBookPath, "w+"); // Create an empty phone book and insert dummy data.
 
-		text = "Uncle Tom;Tommy;123-4567;987-6543;211-2345";
+		text = "Uncle Tom;Tommy;123-4567;987-6543;211-2345\n";
+		text ~= "Utada Hikaru;Hikki;111-1111;111-1983;222-1983";
 		f.write(text);
 	}
 
