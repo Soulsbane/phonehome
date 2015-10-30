@@ -79,7 +79,6 @@ class PhoneHomeArgs : CommandLineArgs
 	}
 private:
 	KeyValueConfig config;
-
 }
 
 /*
@@ -181,7 +180,14 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 	if(entryCount == 0)
 	{
-		writeln("No entries found matching ", searchTerm, " in phonebook: ", phoneBookName);
+		if(searchTerm.startsWith("-"))
+		{
+			writeln("No entries found in phonebook: ", phoneBookName);
+		}
+		else
+		{
+			writeln("No entries found matching ", searchTerm, " in phonebook: ", phoneBookName);
+		}
 	}
 	else
 	{
