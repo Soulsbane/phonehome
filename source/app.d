@@ -270,7 +270,6 @@ void main(string[] arguments)
 	args.addCommand("list-all", "false", "Output every entry in the phone book.");
 	args.addCommand("phonebook", "phonebook.csv", "Set the phonebook to use.");
 	args.addCommand("template", "default", "Set the output template to use.");
-	// TODO: Add command for setting output template.
 
 	args.processArgs(arguments, IgnoreFirstArg.yes);
 }
