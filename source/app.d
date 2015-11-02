@@ -39,7 +39,7 @@ class PhoneHomeArgs : CommandLineArgs
 
 	override void onValidArgs() @trusted
 	{
-		string searchTerm = safeGet(1);
+		immutable string searchTerm = safeGet(1);
 
 		debug
 		{
@@ -108,7 +108,7 @@ private string generateEntry()
 
 private string generateMustacheMembers()
 {
-	auto phoneBookEntryMembers = [__traits(allMembers, PhoneBookEntry)];
+	immutable auto phoneBookEntryMembers = [__traits(allMembers, PhoneBookEntry)];
 	string genStr;
 
 	foreach(member; phoneBookEntryMembers)
@@ -196,12 +196,13 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 		Mustache mustache;
 		auto context = new Mustache.Context;
 		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), config.get("template", "default"));
+		immutable string generatedString = generateMustacheMembers();
 
 		createDefaultTemplate();
 
 		foreach (entry; entries)
 		{
-			mixin(generateMustacheMembers());
+			mixin(generatedString);
 			writeln(mustache.render(defaultTemplateFile, context));
 		}
 	}
