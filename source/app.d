@@ -14,6 +14,7 @@ enum PHONE_BOOK_ENTRY_SIZE = [__traits(allMembers, PhoneBookEntry)].length;
 enum DEFAULT_PHONE_BOOK_NAME = "phonebook.csv";
 
 ConfigPath _AppConfigPath;
+KeyValueConfig _AppConfig;
 
 struct PhoneBookEntry
 {
@@ -29,7 +30,7 @@ class PhoneHomeArgs : CommandLineArgs
 	this()
 	{
 		immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
-		immutable bool loaded = config.loadFile(configFilePath);
+		immutable bool loaded = _AppConfig.loadFile(configFilePath);
 
 		if(!loaded)
 		{
@@ -47,12 +48,12 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 		else
 		{
-			processPhoneBookEntries(config["phonebook"], searchTerm, get!bool("multiple"));
+			processPhoneBookEntries(_AppConfig["phonebook"], searchTerm, get!bool("multiple"));
 		}
 
 	}
 
-	override void onValidArg(immutable string argument) @trusted
+	override void onValidArg(const string argument) @trusted
 	{
 		if(argument == "phonebook")
 		{
@@ -68,17 +69,15 @@ class PhoneHomeArgs : CommandLineArgs
 				phoneBookName = get("phonebook");
 			}
 
-			config["phonebook"] = phoneBookName;
+			_AppConfig["phonebook"] = phoneBookName;
 		}
 		if(argument == "template")
 		{
-			config["template"] = get("template");
+			_AppConfig["template"] = get("template");
 		}
 
-		config.save();
+		_AppConfig.save();
 	}
-private:
-	KeyValueConfig config;
 }
 
 /*
@@ -124,14 +123,6 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 	auto lines = loadPhoneBook(phoneBookName).lineSplitter();
 	uint entryCount = 0;
 	PhoneBookEntry[] entries;
-	KeyValueConfig config;
-	immutable string configFilePath = buildNormalizedPath(_AppConfigPath.getConfigDir("config"), "app.config");
-	immutable bool loaded = config.loadFile(configFilePath);
-
-	if(!loaded)
-	{
-		writeln("FAILED to load configuration file!");
-	}
 
 	foreach(line; lines)
 	{
@@ -195,7 +186,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
-		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), config.get("template", "default"));
+		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), _AppConfig.get("template", "default"));
 		immutable string generatedString = generateMustacheMembers();
 
 		createDefaultTemplate();
