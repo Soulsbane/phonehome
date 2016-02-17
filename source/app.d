@@ -1,6 +1,7 @@
 import std.stdio : writeln;
 import std.string : lineSplitter, strip, toLower, indexOf, startsWith, removechars, CaseSensitive;
 import std.file : exists, readText, mkdirRecurse;
+import std.stdio;
 import std.array : empty, split;
 import std.conv : to;
 import std.path : buildNormalizedPath;
@@ -38,27 +39,27 @@ class PhoneHomeArgs : CommandLineArgs
 		}
 	}
 
-	override void onValidArgs() @trusted
+	override void onValidArgs()
 	{
 		immutable string searchTerm = safeGet(1);
 
 		debug
 		{
-			processPhoneBookEntries("test.csv", searchTerm, get!bool("multiple"));
+			processPhoneBookEntries("test.csv", searchTerm, asBoolean("multiple"));
 		}
 		else
 		{
-			processPhoneBookEntries(_AppConfig["phonebook"], searchTerm, get!bool("multiple"));
+			processPhoneBookEntries(_AppConfig["phonebook"].asString, searchTerm, asBoolean("multiple"));
 		}
 
 	}
 
-	override void onValidArg(const string argument) @trusted
+	override void onValidArg(const string argument)
 	{
 		if(argument == "phonebook")
 		{
 			string phoneBookName;
-			immutable bool isFlag = isFlag("phonebook");
+			/*immutable bool isFlag = isFlag("phonebook");
 
 			if(isFlag) // INFO: The user passed -phonebook instead of -phonebook=name.csv causing CommandLineArgs to set phoneBookName to true
 			{
@@ -66,14 +67,16 @@ class PhoneHomeArgs : CommandLineArgs
 			}
 			else
 			{
-				phoneBookName = get("phonebook");
-			}
+				phoneBookName = asString("phonebook");
+			}*/
+			phoneBookName = asString("phonebook");
 
 			_AppConfig["phonebook"] = phoneBookName;
 		}
+
 		if(argument == "template")
 		{
-			_AppConfig["template"] = get("template");
+			_AppConfig["template"] = asString("template");
 		}
 
 		_AppConfig.save();
@@ -137,12 +140,12 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 			immutable string[] values = line.split(";");
 			immutable string generatedStruct = generateEntry();
 			auto args = new CommandLineArgs;
-			immutable bool listAllEntries = args.get!bool("list-all");
+			immutable bool listAllEntries = args.asBoolean("list-all");
 
 			if(values.length == PHONE_BOOK_ENTRY_SIZE) // Make sure the phone book entry matches the number of field in PhoneBookEntry struct
 			{
 				mixin(generatedStruct);
-				auto cs = cast(CaseSensitive)(args.get!bool("case-sensitive"));
+				auto cs = cast(CaseSensitive)(args.asBoolean("case-sensitive"));
 
 				if(listAllEntries)
 				{
@@ -186,7 +189,7 @@ void processPhoneBookEntries(immutable string phoneBookName, immutable string se
 
 		Mustache mustache;
 		auto context = new Mustache.Context;
-		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), _AppConfig.get("template", "default"));
+		immutable string defaultTemplateFile = buildNormalizedPath(_AppConfigPath.getConfigDir("templates"), _AppConfig.asString("template", "default"));
 		immutable string generatedString = generateMustacheMembers();
 
 		createDefaultTemplate();
@@ -263,5 +266,5 @@ void main(string[] arguments)
 	args.addCommand("phonebook", "phonebook.csv", "Set the phonebook to use.");
 	args.addCommand("template", "default", "Set the output template to use.");
 
-	args.processArgs(arguments, IgnoreFirstArg.yes);
+	args.process(arguments, IgnoreNonArgs.yes);
 }
